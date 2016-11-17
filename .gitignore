@@ -34,7 +34,13 @@ captures/
 
 # Intellij
 *.iml
-.idea/workspace.xml
+.idea
 
 # Keystore files
 *.jks
+
+# For individual title screens
+app/src/main/res/drawable/title_screen_*.png
+
+# gimp files
+xcfs

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.alxgrk.myownadventcalendar.views.ZoomableViewGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/zoomable_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.alxgrk.myownadventcalendar.MainActivity">
+
+    <ImageView
+        android:id="@+id/background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/description_background"
+        android:scaleType="fitXY"
+        android:src="@drawable/background"/>
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <!-- first row -->
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door1"
+            style="@style/DoorViewStyle"
+            app:color="@color/colorPrimaryDark"
+            app:number="1" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door2"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door1"
+            android:layout_toEndOf="@id/door1"
+            app:color="@color/colorPrimaryDark"
+            app:number="2" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door3"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door1"
+            android:layout_toEndOf="@id/door2"
+            app:color="@color/colorPrimaryDark"
+            app:number="3" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door4"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door1"
+            android:layout_toEndOf="@id/door3"
+            app:color="@color/colorPrimaryDark"
+            app:number="4" />
+
+        <!-- second row -->
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door5"
+            style="@style/FirstInRow"
+            android:layout_below="@id/door1"
+            app:color="@color/colorPrimaryDark"
+            app:number="5" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door6"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door5"
+            android:layout_toEndOf="@id/door5"
+            app:color="@color/colorPrimaryDark"
+            app:number="6" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door7"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door5"
+            android:layout_toEndOf="@id/door6"
+            app:color="@color/colorPrimaryDark"
+            app:number="7" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door8"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door5"
+            android:layout_toEndOf="@id/door7"
+            app:color="@color/colorPrimaryDark"
+            app:number="8" />
+
+        <!-- third row -->
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door9"
+            style="@style/FirstInRow"
+            android:layout_below="@id/door5"
+            app:color="@color/colorPrimaryDark"
+            app:number="9" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door10"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door9"
+            android:layout_toEndOf="@id/door9"
+            app:color="@color/colorPrimaryDark"
+            app:number="10" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door11"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door9"
+            android:layout_toEndOf="@id/door10"
+            app:color="@color/colorPrimaryDark"
+            app:number="11" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door12"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door9"
+            android:layout_toEndOf="@id/door11"
+            app:color="@color/colorPrimaryDark"
+            app:number="12" />
+
+        <!-- forth row -->
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door13"
+            style="@style/FirstInRow"
+            android:layout_below="@id/door9"
+            app:color="@color/colorPrimaryDark"
+            app:number="13" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door14"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door13"
+            android:layout_toEndOf="@id/door13"
+            app:color="@color/colorPrimaryDark"
+            app:number="14" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door15"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door13"
+            android:layout_toEndOf="@id/door14"
+            app:color="@color/colorPrimaryDark"
+            app:number="15" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door16"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door13"
+            android:layout_toEndOf="@id/door15"
+            app:color="@color/colorPrimaryDark"
+            app:number="16" />
+
+
+        <!-- fifth row -->
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door17"
+            style="@style/FirstInRow"
+            android:layout_below="@id/door13"
+            app:color="@color/colorPrimaryDark"
+            app:number="17" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door18"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door17"
+            android:layout_toEndOf="@id/door17"
+            app:color="@color/colorPrimaryDark"
+            app:number="18" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door19"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door17"
+            android:layout_toEndOf="@id/door18"
+            app:color="@color/colorPrimaryDark"
+            app:number="19" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door20"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door17"
+            android:layout_toEndOf="@id/door19"
+            app:color="@color/colorPrimaryDark"
+            app:number="20" />
+
+        <!-- forth row -->
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door21"
+            style="@style/FirstInRow"
+            android:layout_below="@id/door17"
+            app:color="@color/colorPrimaryDark"
+            app:number="21" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door22"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door21"
+            android:layout_toEndOf="@id/door21"
+            app:color="@color/colorPrimaryDark"
+            app:number="22" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door23"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door21"
+            android:layout_toEndOf="@id/door22"
+            app:color="@color/colorPrimaryDark"
+            app:number="23" />
+
+        <com.alxgrk.myownadventcalendar.views.DoorView
+            android:id="@+id/door24"
+            style="@style/OthersInRow"
+            android:layout_alignTop="@id/door21"
+            android:layout_toEndOf="@id/door23"
+            app:color="@color/colorPrimaryDark"
+            app:number="24" />
+
+    </RelativeLayout>
+
+</com.alxgrk.myownadventcalendar.views.ZoomableViewGroup>
