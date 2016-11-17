@@ -84,7 +84,7 @@ public class Bounds {
             if (-1 == Math.signum(dx)) {
                 float totalDiffX = dx - translationDiffAlreadyPlanned.x;
                 if(totalDiffX < 0) {
-                    Log.d("Bounds", "totalDiffX " + totalDiffX);
+                    // Log.d("Bounds", "totalDiffX " + totalDiffX);
                     // minus 1 because right/bottom bounds of rect are not included
                     f[Matrix.MTRANS_X] -= totalDiffX - 1;
                 }
@@ -92,7 +92,7 @@ public class Bounds {
             if (-1 == Math.signum(dy)) {
                 float totalDiffY = dy - translationDiffAlreadyPlanned.y;
                 if(totalDiffY < 0) {
-                    Log.d("Bounds", "totalDiffY " + totalDiffY);
+                    // Log.d("Bounds", "totalDiffY " + totalDiffY);
                     // minus 1 because right/bottom bounds of rect are not included
                     f[Matrix.MTRANS_Y] -= totalDiffY - 1;
                 }
@@ -124,18 +124,18 @@ public class Bounds {
 
             if(isTranslationWithinBoundsOfX(xy.x)) {
                 newTrans = new PointF(-xy.x, xyPre.y);
-                Log.d("Bounds", "at least x translation fits");
+                // Log.d("Bounds", "at least x translation fits");
             } else if(isTranslationWithinBoundsOfY(xy.y)) {
                 newTrans = new PointF(xyPre.x, -xy.y);
-                Log.d("Bounds", "at least y translation fits");
+                // Log.d("Bounds", "at least y translation fits");
             } else {
                 newTrans = new PointF(xyPre.x, xyPre.y);
-                Log.d("Bounds", "neither x nor y translation fits");
+                // Log.d("Bounds", "neither x nor y translation fits");
             }
 
             Calculations.setMatrixTranslationXY(matrix, newTrans);
             updateViewBounds(newTrans);
-            Log.d("Bounds", "matrix trans: " + newTrans);
+            // Log.d("Bounds", "matrix trans: " + newTrans);
             return false;
         }
     }

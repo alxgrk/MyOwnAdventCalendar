@@ -221,4 +221,11 @@
 
     </RelativeLayout>
 
+    <FrameLayout
+        android:id="@+id/start_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/title_screen"
+        android:visibility="visible" />
+
 </com.alxgrk.myownadventcalendar.views.ZoomableViewGroup>
