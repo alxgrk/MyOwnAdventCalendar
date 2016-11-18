@@ -3,10 +3,12 @@ package com.alxgrk.myownadventcalendar.measuring;
 import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
 import android.view.View;
 
 /**
+ * This class saves the visible part of the view and the bounds not to be exceeded.
+ * It also helps correcting invalid translations.
+ * <p>
  * Created by alex on 14.11.16.
  */
 
@@ -14,7 +16,7 @@ public class Bounds {
 
     private final RectF visiblePart;
     private final RectF bounds;
-    
+
     private final float originalWidth;
     private final float originalHeight;
 
@@ -31,6 +33,7 @@ public class Bounds {
 
     /**
      * This method considers all possible condition breaches and tries to mend them.
+     *
      * @param matrix
      * @param preMatrix
      * @return
@@ -46,18 +49,29 @@ public class Bounds {
         performValidTranslations(matrix, preMatrix);
     }
 
+    /**
+     * If translation would be positive in the matrix, this means the offset point would be
+     * within the screen and the background would be seen.
+     *
+     * @param matrix
+     */
     private void assertNoTranslationsPositive(Matrix matrix) {
         PointF xy = Calculations.getMatrixTranslationXY(matrix);
         PointF xyWithoutPositives = new PointF(xy.x, xy.y);
 
-        if(xy.x > 0)
+        if (xy.x > 0)
             xyWithoutPositives.x = -0f;
-        if(xy.y > 0)
+        if (xy.y > 0)
             xyWithoutPositives.y = -0f;
 
         Calculations.setMatrixTranslationXY(matrix, xyWithoutPositives);
     }
 
+    /**
+     * Applies the scale provided by the matrix to correct the bounds .
+     *
+     * @param matrix
+     */
     private void adjustByScale(Matrix matrix) {
         PointF scaleXY = Calculations.getMatrixScaleXY(matrix);
 
@@ -67,8 +81,16 @@ public class Bounds {
         // Log.d("Bounds", "adjusted bounds: " + toString());
     }
 
+    /**
+     * If the visiblePart exceeds the bounds the necessary additional translation is compared with
+     * the translation already given by user moment.
+     * Either this one is enough or it will be added by the missing amount to fill bounds again.
+     *
+     * @param matrix
+     * @param preMatrix
+     */
     private void applyAdjustingDifference(Matrix matrix, Matrix preMatrix) {
-        if(!bounds.contains(visiblePart)) {
+        if (!bounds.contains(visiblePart)) {
             float dx = bounds.right - visiblePart.right;
             float dy = bounds.bottom - visiblePart.bottom;
             // Log.d("Bounds", "zooming out difference: " + dx + ", " + dy);
@@ -83,7 +105,7 @@ public class Bounds {
             // is enough to guarantee that visiblePart will not exceed bounds
             if (-1 == Math.signum(dx)) {
                 float totalDiffX = dx - translationDiffAlreadyPlanned.x;
-                if(totalDiffX < 0) {
+                if (totalDiffX < 0) {
                     // Log.d("Bounds", "totalDiffX " + totalDiffX);
                     // minus 1 because right/bottom bounds of rect are not included
                     f[Matrix.MTRANS_X] -= totalDiffX - 1;
@@ -91,7 +113,7 @@ public class Bounds {
             }
             if (-1 == Math.signum(dy)) {
                 float totalDiffY = dy - translationDiffAlreadyPlanned.y;
-                if(totalDiffY < 0) {
+                if (totalDiffY < 0) {
                     // Log.d("Bounds", "totalDiffY " + totalDiffY);
                     // minus 1 because right/bottom bounds of rect are not included
                     f[Matrix.MTRANS_Y] -= totalDiffY - 1;
@@ -106,6 +128,7 @@ public class Bounds {
     /**
      * If every translation could be performed, it will return true.
      * If at least one translation failed and reset to a former state, it returns false.
+     *
      * @param matrix
      * @param preMatrix
      * @return
@@ -116,16 +139,16 @@ public class Bounds {
 
         PointF xyPre = Calculations.getMatrixTranslationXY(preMatrix);
 
-        if(isTranslationWithinBoundsOfX(xy.x) && isTranslationWithinBoundsOfY(xy.y)) {
+        if (isTranslationWithinBoundsOfX(xy.x) && isTranslationWithinBoundsOfY(xy.y)) {
             updateViewBounds(xy);
             return true;
         } else {
             PointF newTrans;
 
-            if(isTranslationWithinBoundsOfX(xy.x)) {
+            if (isTranslationWithinBoundsOfX(xy.x)) {
                 newTrans = new PointF(-xy.x, xyPre.y);
                 // Log.d("Bounds", "at least x translation fits");
-            } else if(isTranslationWithinBoundsOfY(xy.y)) {
+            } else if (isTranslationWithinBoundsOfY(xy.y)) {
                 newTrans = new PointF(xyPre.x, -xy.y);
                 // Log.d("Bounds", "at least y translation fits");
             } else {

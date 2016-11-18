@@ -7,13 +7,13 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srcCompat="@android:drawable/alert_light_frame"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:id="@+id/imageView"
         android:contentDescription="@string/description_calendar_door"
-        android:background="@color/colorAccent"
-        android:scaleType="fitXY" />
+        android:background="@color/colorPrimaryDark"
+        android:scaleType="fitXY"
+        android:src="@drawable/door_front" />
 
     <TextView
         android:layout_width="wrap_content"

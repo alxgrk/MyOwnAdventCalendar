@@ -15,8 +15,6 @@ import com.alxgrk.myownadventcalendar.views.ZoomableViewGroup;
 
 public class MainActivity extends Activity {
 
-    private ImageView backgroundView;
-
     private ZoomableViewGroup zoomView;
 
     private FrameLayout startFragment;
@@ -30,10 +28,8 @@ public class MainActivity extends Activity {
 
         zoomView = (ZoomableViewGroup) findViewById(R.id.zoomable_view);
 
-        backgroundView = (ImageView) findViewById(R.id.background);
-
         mediaPlayer = MediaPlayer.create(this, R.raw.jingle_bells);
-        mediaPlayer.start();
+        //mediaPlayer.start();
 
         startFragment = (FrameLayout) findViewById(R.id.start_fragment);
         startFragment.setOnClickListener(new View.OnClickListener() {
@@ -72,7 +68,7 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        mediaPlayer.start();
+        //mediaPlayer.start();
     }
 
     @Override
@@ -87,6 +83,6 @@ public class MainActivity extends Activity {
         super.onRestart();
 
         mediaPlayer  = MediaPlayer.create(this, R.raw.jingle_bells);
-        mediaPlayer.start();
+        //mediaPlayer.start();
     }
 }
