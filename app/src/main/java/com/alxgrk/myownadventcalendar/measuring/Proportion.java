@@ -1,7 +1,5 @@
 package com.alxgrk.myownadventcalendar.measuring;
 
-import java.util.Comparator;
-
 /**
  * Created by alex on 14.11.16.
  */

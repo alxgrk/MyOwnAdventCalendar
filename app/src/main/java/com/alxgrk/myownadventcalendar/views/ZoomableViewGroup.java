@@ -5,20 +5,30 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PointF;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.*;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.RelativeLayout;
 
+import com.alxgrk.myownadventcalendar.R;
+import com.alxgrk.myownadventcalendar.animation.ZoomAnimation;
 import com.alxgrk.myownadventcalendar.measuring.Bounds;
 import com.alxgrk.myownadventcalendar.measuring.Calculations;
 import com.alxgrk.myownadventcalendar.measuring.Proportion;
 
 public class ZoomableViewGroup extends RelativeLayout {
 
+    private static final String TAG = ZoomableViewGroup.class.getSimpleName();
     private static final float MIN_ZOOM = 1f;
     private static final float MAX_ZOOM = 3f;
-    
+    private static final float ADJUSTING_FACTOR = 25f;
+    public static final int ADJUSTING_EXPONENT = 4;
+
     private Matrix preMatrix = new Matrix();
     private Matrix matrix = new Matrix();
     private Matrix matrixInverse = new Matrix();
@@ -43,11 +53,16 @@ public class ZoomableViewGroup extends RelativeLayout {
     private int heightGroup;
 
     private float oldDist = 1f;
+    private PointF adjustedZoomCenter = new PointF(0,0);
 
     private boolean initZoomApplied = false;
+    private boolean blockUser = false;
 
     private float[] mDispatchTouchEventWorkingArray = new float[2];
     private float[] mOnTouchEventWorkingArray = new float[2];
+
+    private int animTimeToDoor;
+    private int animTimeToInit;
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -86,7 +101,20 @@ public class ZoomableViewGroup extends RelativeLayout {
     }
 
     private void init(Context context) {
+        animTimeToDoor = context.getResources().getInteger(R.integer.anim_time_zoom_to_door);
+        animTimeToInit = context.getResources().getInteger(R.integer.anim_time_zoom_to_init);
+    }
 
+    public boolean isUserBlocked() {
+        return blockUser;
+    }
+
+    public void blockUser() {
+        this.blockUser = true;
+    }
+
+    public void unblockUser() {
+        this.blockUser = false;
     }
 
     @SuppressLint("DrawAllocation")
@@ -100,8 +128,12 @@ public class ZoomableViewGroup extends RelativeLayout {
         // Log.d("width", widthMeasureSpec + " translated to " + widthGroup + "");
         // Log.d("height", heightMeasureSpec + " translated to " + heightGroup + "");
 
-        initContainerProportion = containerProportion = computeContainerProportion();
+        containerProportion = computeContainerProportion();
         bounds = new Bounds(this);
+
+        if(null == initContainerProportion) {
+            initContainerProportion = containerProportion;
+        }
 
         int childCount = getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -146,13 +178,18 @@ public class ZoomableViewGroup extends RelativeLayout {
         PointF scalePoint = Calculations.getMatrixScaleXY(matrix);
         Proportion tmpContainer = new Proportion(scalePoint.x * widthGroup, scalePoint.y * heightGroup);
 
-        //Log.d("computeProportion", "tmpContainer " + tmpContainer.toString());
-        //Log.d("computeProportion", "initContainer " + initContainerProportion);
+        // Log.d("computeProportion", "tmpContainer " + tmpContainer);
+        // Log.d("computeProportion", "initContainer " + initContainerProportion);
         return tmpContainer.withinBoundsOf(initContainerProportion) ? tmpContainer : initContainerProportion;
     }
 
     @Override
     protected void dispatchDraw(Canvas canvas) {
+        if(blockUser) {
+            super.dispatchDraw(canvas);
+            return;
+        }
+
         canvas.save();
 
         // Log.d("dispatchDraw", "preMatrix " + preMatrix);
@@ -173,18 +210,24 @@ public class ZoomableViewGroup extends RelativeLayout {
             fallback.setScale(MIN_ZOOM, MIN_ZOOM);
             fallback.setTranslate(0f, 0f);
             matrixToTest.set(fallback);
+            // Log.d(TAG, "zoom exceeds MIN_ZOOM, set to fallback " + scalePoint);
         }
         if(scalePoint.x > MAX_ZOOM || scalePoint.y > MAX_ZOOM) {
             Calculations.setMatrixScaleXY(matrixToTest, MAX_ZOOM, MAX_ZOOM);
-            if(mode == ZOOM) {
+            if(mode != DRAG) {
                 PointF fallbackTrans = Calculations.getMatrixTranslationXY(fallback);
                 Calculations.setMatrixTranslationXY(matrixToTest, fallbackTrans);
+                // Log.d(TAG, "zoom exceeds MAX_ZOOM, set translation from fallback " + fallbackTrans);
             }
         }
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(blockUser) {
+            return super.onTouchEvent(event);
+        }
+
         // handle touch events here
         mOnTouchEventWorkingArray[0] = event.getX();
         mOnTouchEventWorkingArray[1] = event.getY();
@@ -241,5 +284,113 @@ public class ZoomableViewGroup extends RelativeLayout {
 
         invalidate();
         return true;
+    }
+
+    public void zoomToInit(ZoomEndListener onFinished) {
+        PointF currentScale = Calculations.getMatrixScaleXY(matrix);
+
+        ZoomAnimation zoomAnimation = new ZoomAnimation(
+                currentScale.x, MIN_ZOOM,
+                currentScale.y, MIN_ZOOM,
+                adjustedZoomCenter.x, adjustedZoomCenter.y);
+        zoomAnimation.setDuration(animTimeToInit);
+        zoomAnimation.setFillAfter(true);
+        zoomAnimation.setAnimationListener(onFinished);
+        startAnimation(zoomAnimation);
+    }
+
+    public void zoomToDoor(final DoorView doorView, ZoomEndListener onFinished) {
+        PointF center = doorView.getCenter();
+        adjustToCenter(center);
+        adjustedZoomCenter = center;
+        Log.d(TAG, "zoomTo: " + center.x + "," + center.y);
+
+        ZoomAnimation zoomAnimation = new ZoomAnimation(
+                oldDist, MAX_ZOOM,
+                oldDist, MAX_ZOOM,
+                center.x, center.y);
+        zoomAnimation.setDuration(animTimeToDoor);
+        zoomAnimation.setFillAfter(true);
+        zoomAnimation.setAnimationListener(onFinished);
+        startAnimation(zoomAnimation);
+    }
+
+    private void adjustToCenter(PointF center) {
+        // Log.d(TAG, "original zoom center: " + center.x + "," + center.y);
+
+        int widthGroupCenter = widthGroup / 2;
+        int heightGroupCenter = heightGroup / 2;
+
+        float propX = center.x / widthGroupCenter - 1;
+        if (propX != 0) {
+            float baseX = Math.abs(propX) + 1;
+            double dx = ADJUSTING_FACTOR * Math.pow(baseX, ADJUSTING_EXPONENT);
+            if (propX < 0) {
+                center.x -= dx;
+            } else {
+                center.x += dx;
+            }
+        }
+        
+        float propY = center.y / heightGroupCenter - 1;
+        if (propY != 0) {
+            float baseY = Math.abs(propY) + 1;
+            double dy = ADJUSTING_FACTOR * Math.pow(baseY, ADJUSTING_EXPONENT);
+            if (propY < 0) {
+                center.y -= dy;
+            } else {
+                center.y += dy;
+            }
+        }
+
+        // Log.d(TAG, "trying to adjust center to: " + center.x + "," + center.y);
+        
+        if(center.x > widthGroup)
+            center.x = widthGroup;
+        if(center.x < 0)
+            center.x = 0;
+        if(center.y > heightGroup)
+            center.y = heightGroup;
+        if(center.y < 0)
+            center.y = 0;
+    }
+
+    public ZoomEndListener createZoomEndListener(Runnable task) {
+        return new ZoomEndListener(task);
+    }
+
+    private class ZoomEndListener implements Animation.AnimationListener {
+
+        private Runnable task;
+
+        ZoomEndListener(Runnable task) {
+            this.task = task;
+        }
+
+        @Override
+        public void onAnimationStart(Animation animation) {}
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            Matrix tMatrix = ((ZoomAnimation) animation).getTranslationMatrix();
+            matrix.set(tMatrix);
+            preMatrix.set(tMatrix);
+            matrix.invert(matrixInverse);
+            computeContainerProportion();
+
+            invalidate();
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    new Runnable() {
+                        @Override
+                        public void run() {
+                        if (null != task)
+                            task.run();
+                        }
+                    }, 500
+            );
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {}
     }
 }

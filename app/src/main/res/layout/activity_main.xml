@@ -12,8 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:contentDescription="@string/description_background"
-        android:scaleType="fitXY"
-        android:src="@drawable/background"/>
+        android:scaleType="fitXY" />
 
 
     <RelativeLayout
@@ -237,7 +236,6 @@
         android:id="@+id/start_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/title_screen"
         android:visibility="visible" />
 
 </com.alxgrk.myownadventcalendar.views.ZoomableViewGroup>

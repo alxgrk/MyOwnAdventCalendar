@@ -1,25 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="100dp"
-    android:layout_height="100dp">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/imageView"
-        android:contentDescription="@string/description_calendar_door"
-        android:background="@color/colorPrimaryDark"
+        android:layout_centerInParent="true"
+        android:id="@+id/doorBehind"
+        android:contentDescription="@string/description_calendar_door_behind"
+        android:background="@android:color/white"
         android:scaleType="fitXY"
-        android:src="@drawable/door_front" />
+        android:src="@drawable/door_behind"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/textView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:id="@+id/tVMessage"
+        android:layout_centerInParent="true"
+        android:layout_margin="4dp"
+        android:layout_weight="0.5"
+        tools:ignore="SmallSp"
+        android:textSize="6sp" /> <!-- this small, because zoomable -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/front">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:id="@+id/doorFront"
+            android:contentDescription="@string/description_calendar_door_front"
+            android:background="@color/colorPrimaryDark"
+            android:scaleType="fitXY"
+            android:src="@drawable/door_front" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:id="@+id/tVNumber"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+
+    </RelativeLayout>
+
 </merge>

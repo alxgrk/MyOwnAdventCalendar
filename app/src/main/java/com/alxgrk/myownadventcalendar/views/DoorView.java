@@ -1,35 +1,79 @@
 package com.alxgrk.myownadventcalendar.views;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.text.TextPaint;
+import android.graphics.PointF;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alxgrk.myownadventcalendar.R;
+import com.alxgrk.myownadventcalendar.date.DateUtils;
+import com.alxgrk.myownadventcalendar.util.MessageKeeper;
+import com.alxgrk.myownadventcalendar.util.Preferences;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class DoorView extends RelativeLayout {
-    private String number;
+
+    private static final String TAG = DoorView.class.getSimpleName();
+
+    public static void prepare(MessageKeeper messageKeeper) {
+        for (DoorView door : doors) {
+            String message = messageKeeper.getMessage(door.getNumber());
+            door.fitMessage(message);
+
+            if(door.isOpen) {
+                // Log.d(TAG, "door " + door.getNumber() + " is opened");
+                door.openDoor();
+            }
+        }
+    }
+
+    public static TreeSet<DoorView> getDoorsToOpen() {
+        Comparator<DoorView> doorViewComparator = new Comparator<DoorView>() {
+            @Override
+            public int compare(DoorView door1, DoorView door2) {
+                return Integer.compare(door1.getNumber(), door2.getNumber());
+            }
+        };
+        TreeSet<DoorView> doorsToOpen = new TreeSet<>(doorViewComparator);
+        int doorNumberToday = 24 - new DateUtils().daysUntilChristmas();
+
+        for (DoorView door : doors) {
+            if(door.getNumber() <= doorNumberToday && !door.isOpen()) {
+                doorsToOpen.add(door);
+            }
+        }
+
+        return doorsToOpen;
+    }
+
+    private static Set<DoorView> doors = new HashSet<>(24);
+
+    private int number;
     private int textColor = Color.RED;
-    private float dimension = 0;
+    private int animTime;
 
     private TextView tvNumber;
+    private TextView tvMessage;
 
-    private TextPaint mTextPaint;
-    private float mTextWidth;
-    private float mTextHeight;
+    private RelativeLayout doorFront;
+    private boolean isOpen;
 
-    /*public DoorView(Context context, int number) {
-        super(context);
-
-        this.number = Integer.toString(number);
-        init(context, null, 0);
-    }*/
+    private Preferences preferences;
 
     public DoorView(Context context) {
         super(context);
@@ -46,48 +90,88 @@ public class DoorView extends RelativeLayout {
         init(context, attrs, defStyle);
     }
 
+    @SuppressLint("SetTextI18n")
     private void init(Context context, AttributeSet attrs, int defStyle) {
         inflate(context, R.layout.door_view, this);
+        doors.add(this);
+
+        // TODO put more loading into async task
 
         // Load attributes
         final TypedArray a = getContext().obtainStyledAttributes(
                 attrs, R.styleable.DoorView, defStyle, 0);
 
-        number = a.getString( R.styleable.DoorView_number);
+        number = Integer.parseInt(a.getString(R.styleable.DoorView_number));
         textColor = a.getColor(R.styleable.DoorView_color, textColor);
+        animTime = context.getResources().getInteger(R.integer.anim_time_door);
 
         a.recycle();
 
-        tvNumber = (TextView) findViewById(R.id.textView);
-        tvNumber.setText(number);
+        preferences = Preferences.getInstance(context);
+        isOpen = preferences.isDoorOpened(getNumber());
+
+        doorFront = (RelativeLayout) findViewById(R.id.front);
+
+        tvNumber = (TextView) findViewById(R.id.tVNumber);
+        tvNumber.setText(Integer.toString(number));
         tvNumber.setTextColor(textColor);
+
+        tvMessage = (TextView) findViewById(R.id.tVMessage);
+        if (number == 24)
+            tvMessage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 9);
     }
 
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    private void fitMessage(String message) {
+        tvMessage.setText(message); // avg 40 chars
+        // TODO check if message exceeds parent and reduce size then
+    }
 
-        /*// TODO: consider storing these as member variables to reduce
-        // allocations per draw cycle.
-        int paddingLeft = getPaddingLeft();
-        int paddingTop = getPaddingTop();
-        int paddingRight = getPaddingRight();
-        int paddingBottom = getPaddingBottom();
+    public boolean isOpen() {
+        return isOpen;
+    }
 
-        int contentWidth = getWidth() - paddingLeft - paddingRight;
-        int contentHeight = getHeight() - paddingTop - paddingBottom;
+    public int getNumber() {
+        return number;
+    }
 
-        // Draw the text.
-        canvas.drawText(number,
-                paddingLeft + (contentWidth - mTextWidth) / 2,
-                paddingTop + (contentHeight + mTextHeight) / 2,
-                mTextPaint);
+    public PointF getCenter() {
+        int[] l = new int[2];
+        this.getLocationOnScreen(l);
+        return new PointF((float) (l[0] + getWidth() / 2), (float) (l[1] + getHeight() / 2));
+    }
 
-        // Draw the example drawable on top of the text.
-        if (mExampleDrawable != null) {
-            mExampleDrawable.setBounds(paddingLeft, paddingTop,
-                    paddingLeft + contentWidth, paddingTop + contentHeight);
-            mExampleDrawable.draw(canvas);
-        }*/
+    public void openDoor() {
+        doorFront.setVisibility(GONE);;
+    }
+
+    public void animateOpenDoor(@Nullable final View parent, final Runnable onFinished) {
+        if (null != parent) {
+            //parent.
+        }
+
+        doorFront.setPivotX(0f);
+        doorFront.setPivotY(0.5f);
+
+        doorFront.animate()
+                .setDuration(animTime)
+                .setInterpolator(new AccelerateDecelerateInterpolator())
+                .rotationYBy(-90)
+                .setUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        if (null != parent)
+                            parent.invalidate();
+                    }
+                })
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        DoorView.this.doorFront.setVisibility(GONE);
+                        preferences.doorOpened(getNumber(), true);
+                        onFinished.run();
+                    }
+                })
+                .start();
     }
 }

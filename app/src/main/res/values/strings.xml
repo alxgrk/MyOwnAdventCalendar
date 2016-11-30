@@ -1,7 +1,23 @@
 <resources>
-    <string name="app_name">My Own Advent Calendar</string>
+    <string name="app_name" translatable="false">My Own Advent Calendar</string>
 
-    <string name="title_activity_main">My Own Advent Calendar</string>
-    <string name="description_calendar_door">An advent calendar door.</string>
-    <string name="description_background">The background view.</string>
+    <string name="title_activity_main" translatable="false">My Own Advent Calendar</string>
+    <string name="description_calendar_door_front" translatable="false">The advent calendar door front.</string>
+    <string name="description_calendar_door_behind" translatable="false">The advent calendar door behind.</string>
+    <string name="description_background" translatable="false">The background view.</string>
+
+    <string name="days_notification_title">Knock, knock, &#8230;</string>
+    <string name="days_notification_placeholder_text">Only %1$d days left until Christmas!</string>
+    <string name="days_notification_placeholder_text_serious">Your %1$d. door is waiting to be opened by you.</string>
+
+    <string name="welcome_dialog_title">Welcome to your own Advent calendar</string>
+    <string name="welcome_dialog_message">Sorry, you still have to wait %1$d days until you can open the first door.</string>
+    <string name="welcome_dialog_message_serious">Yeah, the %1$d. of december has finally come! Look what\'s behind the door.</string>
+    <string name="ok">OK</string>
+
+    <plurals name="default_others">
+        <item quantity="one">Only %1$d day left, enjoy your day.</item>
+        <item quantity="other">Only %1$d days left, enjoy your day.</item>
+    </plurals>
+    <string name="default_christmas">Merry Christmas!</string>
 </resources>

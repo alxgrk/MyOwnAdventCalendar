@@ -42,5 +42,8 @@ captures/
 # For individual title screens
 app/src/main/res/drawable/title_screen_*.png
 
+# For individual messages /* TO REMOVE */
+app/src/main/res/values*/strings_*.xml
+
 # gimp files
 xcfs

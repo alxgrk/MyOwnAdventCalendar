@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary_text_default_material_light">#000000</color>
+    <integer name="anim_time_zoom_to_init">300</integer>
+    <integer name="anim_time_zoom_to_door">1000</integer>
+    <integer name="anim_time_door">2000</integer>
 </resources>

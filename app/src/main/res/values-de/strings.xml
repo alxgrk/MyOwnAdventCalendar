@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="days_notification_placeholder_text">Nur noch %1$d Tage bis Weihnachten!</string>
+    <string name="days_notification_placeholder_text_serious">Deine %1$d. Tür wartet darauf von dir geöffnet zu werden.</string>
+    <string name="days_notification_title">Advent, Advent, &#8230;</string>
+
+    <string name="welcome_dialog_message">Leider musst Du noch %1$d Tage warten, bis Du die erste Tür öffnen darfst.</string>
+    <string name="welcome_dialog_message_serious">Juhu, wir haben endlich den %1$d. Dezember! Schau, was sich hinter der Tür versteckt.</string>
+    <string name="welcome_dialog_title">Herzlich Willkommen zu deinem eigenen Adventskalender</string>
+    <string name="ok">OK</string>
+
+    <plurals name="default_others">
+        <item quantity="one">Nur noch %1$d Tag bis Weihnachten.\nViel Spaß!</item>
+        <item quantity="other">Nur noch %1$d Tage bis Weihnachten.\nViel Spaß!</item>
+    </plurals>
+    <string name="default_christmas">Frohe Weihnachten!</string>
+</resources>
